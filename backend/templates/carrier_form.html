@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} Carrier | NexusLogistics{% endblock %}
+{% block page_title %}{% if editing %}Edit Carrier{% else %}New Carrier{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ record.name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Carrier Type</label>
+        <select name="carrier_type">
+          <option value="air" {% if record.carrier_type == 'air' %}selected{% endif %}>Air</option>
+          <option value="sea" {% if record.carrier_type == 'sea' %}selected{% endif %}>Sea</option>
+          <option value="road" {% if record.carrier_type == 'road' %}selected{% endif %}>Road</option>
+          <option value="rail" {% if record.carrier_type == 'rail' %}selected{% endif %}>Rail</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Contact Person</label>
+        <input type="text" name="contact_person" value="{{ record.contact_person|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ record.email|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" name="phone" value="{{ record.phone|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Active Shipments</label>
+        <input type="number" name="active_shipments" value="{{ record.active_shipments|default:'0' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Rating</label>
+        <input type="number" step="0.01" name="rating" value="{{ record.rating|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="active" {% if record.status == 'active' %}selected{% endif %}>Active</option>
+          <option value="suspended" {% if record.status == 'suspended' %}selected{% endif %}>Suspended</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} Carrier</button>
+      <a href="/carriers/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
