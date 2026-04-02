@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Shipments | NexusLogistics{% endblock %}
+{% block page_title %}Shipments{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search shipments...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="booked" {% if status_filter == 'booked' %}selected{% endif %}>Booked</option>
+      <option value="picked_up" {% if status_filter == 'picked_up' %}selected{% endif %}>Picked Up</option>
+      <option value="in_transit" {% if status_filter == 'in_transit' %}selected{% endif %}>In Transit</option>
+      <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
+      <option value="returned" {% if status_filter == 'returned' %}selected{% endif %}>Returned</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/shipments/create/" class="btn btn-primary">+ New Shipment</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Tracking Number</th><th>Origin</th><th>Destination</th><th>Weight Kg</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/shipments/{{ r.pk }}/edit/"><strong>{{ r.tracking_number }}</strong></a></td>
+        <td>{{ r.origin|default:"-" }}</td>
+        <td>{{ r.destination|default:"-" }}</td>
+        <td>{{ r.weight_kg|floatformat:2 }}</td>
+        <td><span class="badge badge-blue">{{ r.get_status_display }}</span></td>
+        <td class="actions">
+          <a href="/shipments/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/shipments/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No shipments found.</p>
+    <a href="/shipments/create/" class="btn btn-primary" style="margin-top:1rem">Create Shipment</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
