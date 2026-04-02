@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | NexusLogistics{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Shipments</div>
+    <div class="stat-value">{{ shipment_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Carriers</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ carrier_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Routes</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ route_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Weight Kg</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text">{{ shipment_total_weight_kg|floatformat:0 }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h3>Recent Shipments</h3>
+    <a href="/shipments/create/" class="btn btn-primary btn-sm">+ New Shipment</a>
+  </div>
+  {% if recent %}
+  <table>
+    <thead>
+      <tr><th>Tracking Number</th><th>Origin</th><th>Destination</th><th>Weight Kg</th><th>Status</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td><a href="/shipments/{{ r.pk }}/edit/">{{ r.tracking_number }}</a></td>
+        <td>{{ r.origin|default:"-" }}</td><td>{{ r.destination|default:"-" }}</td><td>{{ r.weight_kg|floatformat:2 }}</td><td><span class="badge badge-blue">{{ r.get_status_display }}</span></td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records yet.</p>
+    <a href="/shipments/create/" class="btn btn-primary" style="margin-top:1rem">Create First Shipment</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
