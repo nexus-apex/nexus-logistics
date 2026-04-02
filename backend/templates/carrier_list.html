@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Carriers | NexusLogistics{% endblock %}
+{% block page_title %}Carriers{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search carriers...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Carrier Type</option>
+      <option value="air" {% if status_filter == 'air' %}selected{% endif %}>Air</option>
+      <option value="sea" {% if status_filter == 'sea' %}selected{% endif %}>Sea</option>
+      <option value="road" {% if status_filter == 'road' %}selected{% endif %}>Road</option>
+      <option value="rail" {% if status_filter == 'rail' %}selected{% endif %}>Rail</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/carriers/create/" class="btn btn-primary">+ New Carrier</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Carrier Type</th><th>Contact Person</th><th>Email</th><th>Phone</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/carriers/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td><span class="badge badge-blue">{{ r.get_carrier_type_display }}</span></td>
+        <td>{{ r.contact_person|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
+        <td>{{ r.phone|default:"-" }}</td>
+        <td class="actions">
+          <a href="/carriers/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/carriers/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No carriers found.</p>
+    <a href="/carriers/create/" class="btn btn-primary" style="margin-top:1rem">Create Carrier</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
